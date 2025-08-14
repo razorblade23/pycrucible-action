@@ -26,7 +26,7 @@ async function run(): Promise<void> {
     if (!asset) throw new Error(`Unsupported platform: ${platform}`)
 
     const version = versionInput || await getLatestRelease()
-    const binUrl = `https://github.com/razorblade23/PyCrucible/releases/download/${version}/pycrucible_${version}_${asset}`
+    const binUrl = `https://github.com/razorblade23/PyCrucible/releases/download/v0.3.0-pypi-fix3/pycrucible_v0.3.0-pypi-fix3_${asset}`
     const binDir = path.join(process.cwd(), 'pycrucible_bin')
     const binPath = path.join(binDir, platform === 'win32' ? 'pycrucible.exe' : 'pycrucible')
 
