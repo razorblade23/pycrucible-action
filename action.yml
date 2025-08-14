@@ -1,0 +1,22 @@
+name: 'Build Python App with PyCrucible'
+description: 'Bundle a Python project into a standalone binary using PyCrucible'
+author: 'razorblade23'
+inputs:
+  entry:
+    description: 'Path to the entry folder or file'
+    required: false
+    default: '.'
+  output:
+    description: 'Path to output binary'
+    required: false
+    default: 'dist/app'
+  version:
+    description: 'PyCrucible version to use (defaults to latest release)'
+    required: false
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
+branding:
+  icon: 'package'
+  color: 'purple'
+  
