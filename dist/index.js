@@ -18,7 +18,7 @@ async function run() {
     const platformMap = {
       win32: 'windows.exe',
       linux: 'linux',
-      darwin: 'macos'
+      darwin: 'x86_64-apple-darwin'
     };
 
     const platform = os.platform();
