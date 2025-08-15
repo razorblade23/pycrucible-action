@@ -6,9 +6,18 @@ It works cross-platform and downloads the appropriate PyCrucible binary for the 
 
 ## Usage
 
+> Linux and MacOS runners
 ```yaml
-- uses: razorblade23/pycrucible-action@v1
+- uses: razorblade23/pycrucible-action@v1.0.5
   with:
     entry: .
-    output: dist/mytool
+    output: ./myapp
+```
+
+> Windows runners
+```yaml
+- uses: razorblade23/pycrucible-action@v1.0.5
+  with:
+    entry: .
+    output: .\myapp.exe
 ```
