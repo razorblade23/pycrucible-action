@@ -25719,16 +25719,33 @@ async function run() {
         core.setFailed(error.message);
     }
 }
-async function download(url, dest) {
-    const file = (0, fs_1.createWriteStream)(dest);
+async function download(url, dest, redirectCount = 0) {
+    if (redirectCount > 10) {
+        throw new Error(`Too many redirects for ${url}`);
+    }
     return new Promise((resolve, reject) => {
         https.get(url, (response) => {
-            if (response.statusCode !== 200) {
-                reject(new Error(`Failed to download ${url}: ${response.statusCode}`));
+            const status = response.statusCode ?? 0;
+            // Handle redirect (301, 302, 303, 307, 308)
+            if ([301, 302, 303, 307, 308].includes(status)) {
+                const location = response.headers.location;
+                if (!location) {
+                    reject(new Error(`Redirect status ${status} with no Location header for ${url}`));
+                    return;
+                }
+                // Resolve relative redirects
+                const newUrl = new URL(location, url).toString();
+                response.resume(); // discard data
+                download(newUrl, dest, redirectCount + 1).then(resolve).catch(reject);
                 return;
             }
+            if (status !== 200) {
+                reject(new Error(`Failed to download ${url}: ${status}`));
+                return;
+            }
+            const file = (0, fs_1.createWriteStream)(dest);
             streamPipeline(response, file).then(resolve).catch(reject);
-        }).on('error', reject);
+        }).on("error", reject);
     });
 }
 run();
