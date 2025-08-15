@@ -38,17 +38,38 @@ async function run(): Promise<void> {
   }
 }
 
-async function download(url: string, dest: string): Promise<void> {
-  const file = createWriteStream(dest)
+async function download(url: string, dest: string, redirectCount = 0): Promise<void> {
+  if (redirectCount > 10) {
+    throw new Error(`Too many redirects for ${url}`);
+  }
+
   return new Promise((resolve, reject) => {
     https.get(url, (response) => {
-      if (response.statusCode !== 200) {
-        reject(new Error(`Failed to download ${url}: ${response.statusCode}`))
-        return
+      const status = response.statusCode ?? 0;
+
+      // Handle redirect (301, 302, 303, 307, 308)
+      if ([301, 302, 303, 307, 308].includes(status)) {
+        const location = response.headers.location;
+        if (!location) {
+          reject(new Error(`Redirect status ${status} with no Location header for ${url}`));
+          return;
+        }
+        // Resolve relative redirects
+        const newUrl = new URL(location, url).toString();
+        response.resume(); // discard data
+        download(newUrl, dest, redirectCount + 1).then(resolve).catch(reject);
+        return;
       }
-      streamPipeline(response, file).then(resolve).catch(reject)
-    }).on('error', reject)
-  })
+
+      if (status !== 200) {
+        reject(new Error(`Failed to download ${url}: ${status}`));
+        return;
+      }
+
+      const file = createWriteStream(dest);
+      streamPipeline(response, file).then(resolve).catch(reject);
+    }).on("error", reject);
+  });
 }
 
 run()
