@@ -29,7 +29,7 @@ jobs:
       run: |
         npm install
         npm install --save-dev @vercel/ncc
-        npx ncc build src/index.ts --licence licences.txt
+        npx ncc build src/index.ts --license licences.txt
 
     - name: Commit changes
       uses: stefanzweifel/git-auto-commit-action@v4
