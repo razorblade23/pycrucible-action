@@ -32,14 +32,7 @@ jobs:
         npx ncc build src/index.ts --license licences.txt
 
     - name: Commit changes
-      uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: Automated Change
-        branch: master
-        commit_options: '--no-verify --signoff'
-        commit_author: Author <actions@github.com>
-        status_options: '--untracked-files=no'
-        skip_dirty_check: true
+      uses: stefanzweifel/git-auto-commit-action@v6
         
 
     
