@@ -12,6 +12,8 @@ It works cross-platform and downloads the appropriate PyCrucible binary for the 
   with:
     entry: .
     output: ./myapp
+    # Version is optional, defaults to latest
+    version: 0.3.9
 ```
 
 > Windows runners
@@ -20,4 +22,6 @@ It works cross-platform and downloads the appropriate PyCrucible binary for the 
   with:
     entry: .
     output: .\myapp.exe
+    # Version is optional, defaults to latest
+    version: 0.3.9
 ```
