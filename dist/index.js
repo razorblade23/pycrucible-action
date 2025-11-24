@@ -25681,72 +25681,27 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(7484));
 const exec = __importStar(__nccwpck_require__(5236));
-const os = __importStar(__nccwpck_require__(857));
-const https = __importStar(__nccwpck_require__(5692));
-const fs_1 = __nccwpck_require__(9896);
-const stream_1 = __nccwpck_require__(2203);
-const util_1 = __nccwpck_require__(9023);
-const path_1 = __importDefault(__nccwpck_require__(6928));
-const streamPipeline = (0, util_1.promisify)(stream_1.pipeline);
 async function run() {
     try {
         const entry = core.getInput('entry') || '.';
         const output = core.getInput('output') || 'dist/app';
-        const versionInput = core.getInput('version');
-        const platformUrl = {
-            win32: 'https://github.com/razorblade23/PyCrucible/releases/download/v0.3.0-pypi-fix3/pycrucible_v0.3.0-pypi-fix3_x86_64-pc-windows-msvc.exe',
-            linux: 'https://github.com/razorblade23/PyCrucible/releases/download/v0.3.0-pypi-fix3/pycrucible_v0.3.0-pypi-fix3_x86_64-unknown-linux-gnu',
-            darwin: 'https://github.com/razorblade23/PyCrucible/releases/download/v0.3.0-pypi-fix3/pycrucible_v0.3.0-pypi-fix3_x86_64-apple-darwin',
-        };
-        const platform = os.platform();
-        const binUrl = platformUrl[platform];
-        if (!binUrl)
-            throw new Error(`Unsupported platform: ${platform}`);
-        const binDir = path_1.default.join(process.cwd(), 'pycrucible_bin');
-        const binPath = path_1.default.join(binDir, platform === 'win32' ? 'pycrucible.exe' : 'pycrucible');
-        (0, fs_1.mkdirSync)(binDir, { recursive: true });
-        await download(binUrl, binPath);
-        (0, fs_1.chmodSync)(binPath, 0o755);
-        await exec.exec(binPath, ['-e', entry, '-o', output]);
+        const versionInput = core.getInput('version') || 'pycrucible';
+        // Install PyCrucible (optionally pinned)
+        if (versionInput === 'latest') {
+            await exec.exec('python3', ['-m', 'pip', 'install', 'pycrucible']);
+        }
+        else {
+            await exec.exec('python3', ['-m', 'pip', 'install', `pycrucible==${versionInput}`]);
+        }
+        // Run PyCrucible CLI
+        await exec.exec('pycrucible', ['-e', entry, '-o', output]);
     }
     catch (error) {
         core.setFailed(error.message);
     }
-}
-async function download(url, dest, redirectCount = 0) {
-    if (redirectCount > 10) {
-        throw new Error(`Too many redirects for ${url}`);
-    }
-    return new Promise((resolve, reject) => {
-        https.get(url, (response) => {
-            const status = response.statusCode ?? 0;
-            // Handle redirect (301, 302, 303, 307, 308)
-            if ([301, 302, 303, 307, 308].includes(status)) {
-                const location = response.headers.location;
-                if (!location) {
-                    reject(new Error(`Redirect status ${status} with no Location header for ${url}`));
-                    return;
-                }
-                // Resolve relative redirects
-                const newUrl = new URL(location, url).toString();
-                response.resume(); // discard data
-                download(newUrl, dest, redirectCount + 1).then(resolve).catch(reject);
-                return;
-            }
-            if (status !== 200) {
-                reject(new Error(`Failed to download ${url}: ${status}`));
-                return;
-            }
-            const file = (0, fs_1.createWriteStream)(dest);
-            streamPipeline(response, file).then(resolve).catch(reject);
-        }).on("error", reject);
-    });
 }
 run();
 
