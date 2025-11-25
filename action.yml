@@ -13,6 +13,7 @@ inputs:
   version:
     description: 'PyCrucible version to use (defaults to latest release)'
     required: false
+    defualt: 'latest'
 runs:
   using: 'node20'
   main: 'dist/index.js'
