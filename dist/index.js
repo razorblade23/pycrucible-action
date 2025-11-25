@@ -25688,7 +25688,7 @@ async function run() {
     try {
         const entry = core.getInput('entry') || '.';
         const output = core.getInput('output') || 'dist/app';
-        const versionInput = core.getInput('version') || 'pycrucible';
+        const versionInput = core.getInput('version') || 'latest';
         // Install PyCrucible (optionally pinned)
         if (versionInput === 'latest') {
             await exec.exec('python3', ['-m', 'pip', 'install', 'pycrucible']);
