@@ -1,0 +1,45 @@
+name: Build `TS Code` -> `Github Action`.
+
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+
+# require for commiting builded files
+permissions:
+  contents: write
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Build Ts Files to Action
+        run: |
+          npm install
+          npx ncc build src/index.ts --license license.txt 
+
+      - name: Commit Builded Action To Repository
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "build: compile ts code to github action using github action\nthis is a automated commit createdby github action/bot"
+          tag_name: 'latest'
+          file_pattern: 'dist/*'
+          commit_user_name: Github Action Builder Bot
+
