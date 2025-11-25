@@ -1,5 +1,7 @@
 # PyCrucible GitHub Action
 
+[![Build `TS Code` -> `Github Action`.](https://github.com/razorblade23/pycrucible-action/actions/workflows/github-action-build.yml/badge.svg)](https://github.com/razorblade23/pycrucible-action/actions/workflows/github-action-build.yml)
+
 This GitHub Action builds a standalone binary from your Python project using [PyCrucible](https://github.com/razorblade23/PyCrucible). 
 
 It works cross-platform and downloads the appropriate PyCrucible binary for the runner OS.
