@@ -37,4 +37,9 @@ jobs:
 
       - name: Commit Builded Action To Repository
         uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "build: compile ts code to github action using github action\nthis is a automated commit createdby github action/bot"
+          tag_name: 'latest'
+          file_pattern: 'dist/*'
+          commit_user_name: Github Action Builder Bot
 
