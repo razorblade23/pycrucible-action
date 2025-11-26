@@ -10,7 +10,7 @@ It works cross-platform and downloads the appropriate PyCrucible binary for the 
 
 > Linux and MacOS runners
 ```yaml
-- uses: razorblade23/pycrucible-action@v3
+- uses: razorblade23/pycrucible-action@v4
   with:
     entry: .
     output: ./myapp
@@ -20,7 +20,7 @@ It works cross-platform and downloads the appropriate PyCrucible binary for the 
 
 > Windows runners
 ```yaml
-- uses: razorblade23/pycrucible-action@v3
+- uses: razorblade23/pycrucible-action@v4
   with:
     entry: .
     output: .\myapp.exe
